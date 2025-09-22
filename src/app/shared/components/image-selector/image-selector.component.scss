@@ -1,0 +1,19 @@
+.imagenExplorar {
+    height: 75px; 
+    width: 100%;
+}
+
+.elementoSeleccionado {
+    position: absolute;
+    z-index: 1000;
+    display: block;
+    background: var(--primary-color);
+    opacity: 0.8;
+    height: 100%;
+    width: 100%;
+}
+
+.containerImagenExplorador {
+    position: relative; 
+    display: flex;
+}

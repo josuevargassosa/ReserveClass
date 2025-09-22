@@ -1,0 +1,62 @@
+<div class="flex-container">
+  <div class="left-button">
+    <p-dropdown
+      [options]="periodOptions"
+      [(ngModel)]="selectedPeriod"
+      placeholder="Seleccione un periodo"
+      class="mr-2 mb-5"
+      (onChange)="changeFilter($event.value)"
+    >
+    </p-dropdown>
+  </div>
+  <div class="right-button">
+    <button
+      pButton
+      class="mr-2 mb-5 p-button-info"
+      label="Download"
+      icon="pi pi-download"
+      (click)="download($event)"
+    ></button>
+  </div>
+</div>
+
+<p-dialog
+  header="Confirmar"
+  [(visible)]="displayConfirmDialogAprove"
+  [modal]="true"
+  [closable]="false"
+>
+  <p>¿Está seguro de que desea aprobar el comprobante?</p>
+  <p-footer>
+    <button
+      pButton
+      label="Cancelar"
+      icon="pi pi-times"
+      (click)="cancel()"
+    ></button>
+    <button
+      pButton
+      label="Aceptar"
+      icon="pi pi-check"
+      (click)="confirm()"
+    ></button>
+  </p-footer>
+</p-dialog>
+
+<div class="main-container">
+  <app-tabla
+    dataKey="descripcion"
+    [dataArray]="comprobantes"
+    [loading]="loading"
+    [cols]="cols"
+    collection="Comprobantes"
+    [mostrarEstado]="false"
+    (verComprobante)="verComprobante($event)"
+    (descargarComprobante)="downloadComprobante($event)"
+    (aprobarComprobante)="aprobarComprobante($event)"
+    (rechazarComprobante)="rechazarComprobante($event)"
+    [multiAcciones]="acciones"
+    [showMultiAcciones]="true"
+  >
+  </app-tabla>
+</div>

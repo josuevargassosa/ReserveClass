@@ -1,0 +1,106 @@
+<form autocomplete="off" [formGroup]="formGroup" (ngSubmit)="enviar()">
+  <div class="col-12 p-ai-center justify-content-center">
+    <div class="p-fluid">
+      <div class="field">
+        <label for="seleccionImagen">Seleccione Imagen</label>
+        <p-selectButton
+          id="seleccionImagen"
+          formControlName="seleccionImagen"
+          (onChange)="limpiarImagen()"
+          [options]="opcionesImagen"
+          optionLabel="label"
+          optionValue="value"
+          optionDisabled="inactive"
+        ></p-selectButton>
+      </div>
+    </div>
+    <div
+      id="imagenNueva"
+      *ngIf="formGroup.get('seleccionImagen')?.value == enumImagen.Nueva"
+    >
+      <div class="p-fluid">
+        <div class="field">
+          <label for="descripcionImagen">Descripción Imagen</label>
+          <input
+            pInputText
+            id="descripcionImagen"
+            type="text"
+            formControlName="descripcionImagen"
+            autofocus
+          />
+        </div>
+      </div>
+      <div class="p-fluid">
+        <div class="field">
+          <label for="accion"
+            >Seleccionar imagen (Dimensiones:
+            {{ constantes.RESTRICCION_IMAGEN_MARCA }})</label
+          >
+          <p-fileUpload
+            name="myfile[]"
+            accept="image/png"
+            [maxFileSize]="1000000"
+            chooseLabel="Seleccionar"
+            [auto]="true"
+            #uploadSelect
+            uploadLabel="Cargar"
+            cancelLabel="Cancelar"
+            [customUpload]="true"
+            (uploadHandler)="cargaArchivo($event)"
+            (onRemove)="limpiarImagen()"
+          ></p-fileUpload>
+        </div>
+        <img [src]="imagenSrc" *ngIf="imagenSrc" />
+      </div>
+    </div>
+    <p-scrollPanel [style]="{ width: '100%', height: '250px' }">
+      <div
+        id="imagenExplorar"
+        *ngIf="formGroup.get('seleccionImagen')?.value == enumImagen.Explorar"
+      >
+        <div class="grid">
+          <!-- <div class="col-2" *ngFor="let imagen of imagenesPublicidad; let i = index">
+        
+                        <div class="containerImagenExplorador" (click)="seleccionarImagenExplorar(i)">
+                            <img src="{{imagenService.url}}/{{coleccionImg}}/{{imagen.identidad}}"
+                                class="imagenExplorar" />
+                            <div [ngClass]="{'elementoSeleccionado': i == indexImagenExplorar}"></div>
+                        </div>
+                    </div> -->
+        </div>
+      </div>
+    </p-scrollPanel>
+    <div
+      id="imagenExterna"
+      *ngIf="formGroup.get('seleccionImagen')?.value == enumImagen.Externa"
+    >
+      <div class="p-fluid">
+        <div class="field">
+          <label for="urlImagenExterna">URL Imagen</label>
+          <div class="p-inputgroup">
+            <input
+              pInputText
+              id="urlImagenExterna"
+              type="text"
+              formControlName="urlImagenExterna"
+              (input)="buscarImagenExterna(false)"
+              autofocus
+            />
+            <button
+              id="boton"
+              type="button"
+              pButton
+              icon="pi pi-search"
+              (click)="buscarImagenExterna(true)"
+            ></button>
+          </div>
+        </div>
+      </div>
+      <div class="p-fluid" *ngIf="imagenPreview">
+        <div class="field">
+          <img src="{{ formGroup.get('urlImagenExterna')?.value }}" />
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

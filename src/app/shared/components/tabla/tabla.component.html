@@ -1,0 +1,220 @@
+<p-table
+  [value]="dataArray"
+  [loading]="loading"
+  [resizableColumns]="true"
+  [responsive]="true"
+  [paginator]="true"
+  [rows]="rows"
+  [columns]="cols"
+  [showCurrentPageReport]="true"
+  styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  responsiveLayout="scroll"
+  currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th *ngFor="let col of cols" [pSortableColumn]="col.field">
+        {{ col.header }}
+        <p-sortIcon
+          [field]="col.field"
+          *ngIf="col.tipo !== globalConstantes.TIPO_COLUMNA_IMAGEN"
+        ></p-sortIcon>
+        <p-columnFilter
+          type="text"
+          [field]="col.field"
+          display="menu"
+          *ngIf="col.tipo !== globalConstantes.TIPO_COLUMNA_IMAGEN"
+        ></p-columnFilter>
+      </th>
+      <th *ngIf="mostrarEstado">Estado</th>
+      <!-- <th style="width: 8em"></th> -->
+    </tr>
+  </ng-template>
+  <ng-template
+    pTemplate="body"
+    let-rowData
+    let-editing="editing"
+    let-ri="rowIndex"
+    let-columns="columns"
+  >
+    <tr [pEditableRow]="rowData">
+      <td *ngFor="let col of cols">
+        <p-cellEditor *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_TEXTO">
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="rowData[col.field]" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ rowData[col.field] }}
+          </ng-template>
+        </p-cellEditor>
+        <p-cellEditor *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_SELECT">
+          <ng-template pTemplate="input">
+            <p-dropdown
+              [options]="col.opciones"
+              [(ngModel)]="rowData[col.field]"
+              optionLabel="label"
+              optionValue="value"
+            ></p-dropdown>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ rowData[col.field] | descifraTextoArray : col.opciones }}
+          </ng-template>
+        </p-cellEditor>
+        <p-cellEditor *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_MONEDA">
+          <ng-template pTemplate="input">
+            <p-inputNumber
+              [(ngModel)]="rowData[col.field]"
+              mode="currency"
+              currency="USD"
+              locale="en-US"
+            ></p-inputNumber>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ rowData[col.field] | currency }}
+          </ng-template>
+        </p-cellEditor>
+        <p-cellEditor *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_NUMERO">
+          <ng-template pTemplate="input">
+            <p-inputNumber [(ngModel)]="rowData[col.field]"></p-inputNumber>
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ rowData[col.field] | number }}
+          </ng-template>
+        </p-cellEditor>
+        <p-cellEditor *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_IMAGEN">
+          <ng-template pTemplate="input">
+            <button pButton label="Cargar"></button>
+          </ng-template>
+          <ng-template pTemplate="output">
+            <p-image
+              imageClass="img-thumbnail"
+              [preview]="true"
+              [attr.alt]="rowData.descripcion"
+              src="{{ rowData | image }}"
+            ></p-image>
+          </ng-template>
+        </p-cellEditor>
+        <p-cellEditor *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_FECHA">
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="rowData[col.field]" />
+          </ng-template>
+          <ng-template pTemplate="output">
+            {{ rowData[col.field] }}
+          </ng-template>
+        </p-cellEditor>
+        <p-cellEditor *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_CHECK">
+          <ng-template pTemplate="output">
+            <p-inputSwitch
+              (onChange)="
+                actualizarEstadoRow(
+                  rowData,
+                  $event.checked,
+                  globalConstantes.TIPO_COLUMNA_CHECK
+                )
+              "
+              [ngModel]="
+                rowData.estado == 'A'
+                  ? true
+                  : false || rowData.estado == 'ACT'
+                  ? true
+                  : false
+                  "
+            >
+            </p-inputSwitch>
+          </ng-template>
+        </p-cellEditor>
+        <p-cellEditor *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_ACCIONES">
+          <ng-template pTemplate="input">
+            <input pInputText type="text" [(ngModel)]="rowData[col.field]" />
+          </ng-template>
+          <ng-template pTemplate="output" *ngIf="showMultiAcciones">
+            <div style="display: flex; justify-content: center; gap: 10px;">
+              <div *ngFor="let a of multiAcciones; let i = index">
+                <button
+                  pButton
+                  type="button"
+                  *ngIf="a.visible && a.tipoAccion != globalConstantes.ACCION_VER"
+                  pInitEditableRow
+                  [icon]="a.icon"
+                  class="p-button-rounded p-button-text"
+                  (click)="onRowEditInit(rowData, a.tipoAccion)"
+                ></button>
+                <p-image
+                  *ngIf="a.visible && a.tipoAccion == globalConstantes.ACCION_VER"
+                  imageClass="img-thumbnail-xs"
+                  [preview]="true"
+                  alt="comprobante image"
+                  [src]="rowData | image"
+                ></p-image>
+              </div>
+            </div>
+          </ng-template>
+        </p-cellEditor>
+        <span
+          *ngIf="col.tipo === globalConstantes.TIPO_COLUMNA_BADGE"
+          [class]="
+            'customer-badge ' +
+            obtenerCssClassList(rowData[col.field], col.opciones)
+          "
+        >
+          {{ obtenerLabelList(rowData[col.field], col.opciones, rowData) }}
+        </span>
+      </td>
+      <td *ngIf="mostrarEstado">
+        <p-inputSwitch
+          (onChange)="actualizarEstadoRow(rowData, $event.checked)"
+          [ngModel]="rowData.estado == 'A' ? true : false"
+        >
+        </p-inputSwitch>
+      </td>
+      <td style="text-align: center" *ngFor="let a of acciones; let i = index">
+        <button
+          pButton
+          type="button"
+          *ngIf="a.visible"
+          pInitEditableRow
+          [icon]="a.icon"
+          class="p-button-rounded p-button-text"
+          (click)="onRowEditInit(rowData, a.tipoAccion)"
+        ></button>
+        <!--<button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil" class="p-button-rounded p-button-text" (click)="onRowEditInit(rowData)"></button>
+                <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="onRowEditInit(rowData)"></button>
+                <button *nESTADO_ACTIVO_COMPUESTOgIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check" class="p-button-rounded p-button-text p-button-success mr-2" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+                <button-- *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" (click)="onRowEditCancel(rowData, ri)"></button-->
+      </td>
+      
+
+      <!-- <td style="text-align:center">
+                <button pButton type="button" pInitEditableRow icon="pi pi-pencil" class="p-button-rounded p-button-text" (click)="onRowEditInit(rowData, 'acction-edit')"></button>
+                <button pButton type="button" pInitEditableRow icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="onRowDelete(rowData)"></button>
+                <button pButton type="button" *ngIf="(rowData.estado == globalConstantes.ESTADO_INACTIVO_COMPUESTO || rowData.estado == globalConstantes.ESTADO_INACTIVO_SIMPLE)" pInitEditableRow [icon]="iconAdd" class="p-button-rounded p-button-text" (click)="onRowEditInit(rowData, globalConstantes.ACCION_ELIMINAR)"></button>
+            </td> -->
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage" let-columns>
+    <tr>
+      <td [attr.colspan]="columns.length + 1" style="text-align: center">
+        No hay registros
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+
+<!-- <td style="text-align: center" *ngIf="showMultiAcciones">
+  <div  *ngFor="let a of multiAcciones; let i = index" >
+    <button
+    pButton
+    type="button"
+    *ngIf="a.visible"
+    pInitEditableRow
+    [icon]="a.icon"
+    class="p-button-rounded p-button-text"
+    (click)="onRowEditInit(rowData, a.tipoAccion)"
+  ></button>
+  </div> -->
+  <!--<button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-pencil" class="p-button-rounded p-button-text" (click)="onRowEditInit(rowData)"></button>
+          <button *ngIf="!editing" pButton type="button" pInitEditableRow icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" (click)="onRowEditInit(rowData)"></button>
+          <button *nESTADO_ACTIVO_COMPUESTOgIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check" class="p-button-rounded p-button-text p-button-success mr-2" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+          <button-- *ngIf="editing" pButton type="button" pCancelEditableRow icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" (click)="onRowEditCancel(rowData, ri)"></button-->
+<!-- </td> -->

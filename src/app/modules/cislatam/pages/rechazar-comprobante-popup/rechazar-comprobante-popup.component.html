@@ -1,0 +1,81 @@
+<div class="p-12 reject-dialog" role="dialog" aria-labelledby="rej-title">
+  <h2 id="rej-title" class="text-lg font-medium mb-4 text-center">
+    Motivo de rechazo:
+  </h2>
+
+  <div>
+    <label for="motivoRechazo" class="sr-only">Motivo de rechazo</label>
+    <p-dropdown
+      id="motivoRechazo"
+      [(ngModel)]="observacion"
+      [options]="motivosRechazo"
+      placeholder="Seleccione un motivo"
+      [appendTo]="'body'"
+      [scrollHeight]="'260px'"
+      [panelStyleClass]="'reject-dropdown-panel'"
+      class="w-full"
+      aria-required="true"
+    ></p-dropdown>
+
+    <small class="p-error" *ngIf="observacionError"
+      >Este campo es obligatorio</small
+    >
+
+    <div *ngIf="observacion === 'Otros'" class="mt-2">
+      <label for="observacionOtros" class="sr-only"
+        >Especifique otro motivo</label
+      >
+      <textarea
+        id="observacionOtros"
+        [(ngModel)]="observacionOtros"
+        rows="3"
+        cols="50"
+        pInputTextarea
+        [autoResize]="true"
+        placeholder="Especifique otro motivo"
+        class="w-full"
+      ></textarea>
+    </div>
+  </div>
+
+  <!-- Boton acciones -->
+  <div class="mt-6 flex justify-end gap-3 actions">
+    <button
+      pButton
+      class="p-button-outlined secondary"
+      (click)="onCancel()"
+      label="Cancelar"
+    ></button>
+    <button
+      pButton
+      class="primary p-button-danger"
+      [disabled]="!isValid"
+      (click)="onAccept()"
+      label="Rechazar"
+    ></button>
+  </div>
+
+  <!-- Diálogo de confirmación interno: mantiene p-footer -->
+  <p-dialog
+    header="Confirmar"
+    [(visible)]="displayConfirmDialog"
+    [modal]="true"
+    [closable]="false"
+  >
+    <p>¿Está seguro de que desea rechazar el comprobante?</p>
+    <p-footer>
+      <button
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        (click)="cancel()"
+      ></button>
+      <button
+        pButton
+        label="Aceptar"
+        icon="pi pi-check"
+        (click)="confirm()"
+      ></button>
+    </p-footer>
+  </p-dialog>
+</div>

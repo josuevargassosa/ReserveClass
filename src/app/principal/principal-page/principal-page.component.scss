@@ -1,0 +1,17 @@
+.loading-menu {
+    display: flex;
+    justify-content: center;
+    margin: 5px;
+}
+
+:host ::ng-deep .content-side {
+    .p-sidebar-content {
+        padding: 0 !important;
+    }
+}
+
+@media (max-width: 767px) {
+    #sidebar{
+        display: none !important;
+    }
+}

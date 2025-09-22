@@ -1,0 +1,86 @@
+<p-card header="Reservas">
+  <div class="flex justify-content-between align-items-center mb-3">
+    <div class="text-500">Lista de reservas existentes</div>
+
+    <button pButton label="Nueva" icon="pi pi-plus" class="p-button-sm"
+            (click)="openNew()"></button>
+  </div>
+
+  <p-table [value]="rows" [loading]="loading" responsiveLayout="scroll"
+           [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]" emptyMessage="Sin registros">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Fecha</th>
+        <th>Laboratorio</th>
+        <th>Usuario</th>
+        <th>Asignatura</th>
+        <th>Horario</th>
+        <th>Estado</th>
+        <th style="width: 140px; text-align:right">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-r>
+      <tr>
+        <td>{{ r.fecha }}</td>
+        <td>{{ r.laboratorioId }}</td>
+        <td>{{ r.usuarioId }}</td>
+        <td>{{ r.asignaturaId }}</td>
+        <td>{{ r.horaInicio }} - {{ r.horaFin }}</td>
+        <td>
+          <span class="p-tag" [ngClass]="{
+            'p-tag-warning': r.estado === 'Pendiente',
+            'p-tag-success': r.estado === 'Aprobada',
+            'p-tag-danger':  r.estado === 'Rechazada'
+          }">{{ r.estado }}</span>
+        </td>
+        <td class="text-right">
+          <button pButton icon="pi pi-check"
+                  class="p-button-rounded p-button-text p-button-success mr-1"
+                  [disabled]="r.estado !== 'Pendiente' || !(rol==='Administrador'||rol==='Coordinador')"
+                  (click)="approve(r)" pTooltip="Aprobar"></button>
+
+          <button pButton icon="pi pi-times"
+                  class="p-button-rounded p-button-text p-button-danger"
+                  [disabled]="r.estado !== 'Pendiente' || !(rol==='Administrador'||rol==='Coordinador')"
+                  (click)="reject(r)" pTooltip="Rechazar"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>
+
+<!-- Dialog Nueva -->
+<p-dialog header="Nueva reserva" [(visible)]="showNew" [modal]="true" [style]="{width:'32rem'}">
+  <form [formGroup]="form" class="p-fluid">
+    <div class="field">
+      <label>Laboratorio ID</label>
+      <input pInputText type="number" formControlName="laboratorioId" />
+    </div>
+
+    <div class="field">
+      <label>Usuario ID</label>
+      <input pInputText type="number" formControlName="usuarioId" [readonly]="rol==='Docente'"/>
+    </div>
+
+    <div class="field">
+      <label>Asignatura ID</label>
+      <input pInputText type="number" formControlName="asignaturaId" />
+    </div>
+
+    <div class="field">
+      <label>Inicio</label>
+      <input pInputText type="datetime-local" formControlName="inicioISO" />
+    </div>
+
+    <div class="field">
+      <label>Fin</label>
+      <input pInputText type="datetime-local" formControlName="finISO" />
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Cancelar" class="p-button-text" (click)="showNew=false"></button>
+    <button pButton label="Guardar" (click)="saveNew()" [disabled]="form.invalid"></button>
+  </ng-template>
+</p-dialog>

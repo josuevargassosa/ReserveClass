@@ -1,0 +1,36 @@
+<div class="flex-container">
+  <div class="left-button">
+    <p-dropdown 
+      [options]="periodOptions" 
+      [(ngModel)]="selectedPeriod" 
+      placeholder="Seleccione un periodo" 
+      class="mr-2 mb-5"
+      (onChange)="changeFilter($event)">
+    </p-dropdown>
+  </div>
+  <div class="right-button">
+    <button 
+      pButton 
+      class="mr-2 mb-5 p-button-info" 
+      label="Download" 
+      icon="pi pi-download" 
+      (click)="onDownload($event)">
+    </button>
+  </div>
+</div>
+
+<div class="main-container">
+  <app-tabla
+      dataKey="descripcion" 
+      [dataArray]="comprobantes"
+      [loading]="loading" 
+      [cols]="cols" 
+      collection="Comprobantes"
+      [mostrarEstado]="false"
+      (descargarComprobante)="downloadComprobante($event)"
+      [multiAcciones]="acciones"
+      [showMultiAcciones]="true"
+      >
+  </app-tabla>
+
+</div>

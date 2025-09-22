@@ -1,0 +1,92 @@
+<form autocomplete="off" [formGroup]="form" (ngSubmit)="confirmForm()">
+  <div class="grid">
+    <div *ngFor="let col of cols" [class]="col.class">
+      <div class="p-fluid">
+        <!-- TIPO FIELD TEXTO -->
+        <div
+          class="field"
+          *ngIf="col.field.typeField == globalConstantes.TIPO_COLUMNA_TEXTO"
+        >
+          <label [for]="col.title">
+            <b>{{ col.title }}</b>
+          </label>
+          <input
+            pInputText
+            id="nombre"
+            type="text"
+            [readOnly]="col.field.readOnly"
+            [formControlName]="col.field.formFieldName!"
+            autofocus
+          />
+        </div>
+        <!-- TIPO FIELD SELECT -->
+        <div
+          class="field"
+          *ngIf="col.field.typeField == globalConstantes.TIPO_COLUMNA_SELECT"
+        >
+          <label [for]="col.title">
+            <b>{{ col.title }}</b>
+          </label>
+          <p-dropdown
+            placeholder="Seleccione un {{ col.title! }}"
+            optionLabel="name"
+            optionValue="value"
+            [formControlName]="col.field.formFieldName!"
+            [options]="col.field.collection!"
+            [filter]="true"
+            [showClear]="true"
+            (onChange)="onChangeSelect($event, col)"
+          ></p-dropdown>
+        </div>
+
+        <div
+          class="field"
+          *ngIf="col.field.typeField == globalConstantes.TIPO_COLUMNA_LIST"
+        >
+          <label [for]="col.title">
+            <b>{{ col.title }}</b>
+          </label>
+          <p-listbox
+            [options]="col.field.collection!"
+            [filter]="true"
+            dataKey="nombre"
+            [listStyle]="{ 'max-height': '170px', width: '100%' }"
+          >
+            <ng-template let-element pTemplate="item">
+              <div class="element-item w-100">
+                <div class="flex justify-content-between">
+                  <h6>
+                    <!-- {{ element.nombre + " (" + element.tipoElemento + ")" }} -->
+                  </h6>
+                  <!-- <span (click)="removeElement(element)">
+                    <i class="pi pi-trash"></i>
+                  </span> -->
+                </div>
+              </div>
+            </ng-template>
+          </p-listbox>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 flex justify-content-center">
+    <div class="mr-2 p-mt-2">
+      <p-button
+        [disabled]="!form.valid"
+        label="Guardar"
+        icon="pi pi-save"
+        type="submit"
+      ></p-button>
+    </div>
+    <div class="mr-2 p-mt-2">
+      <button
+        pButton
+        type="button"
+        label="Limpiar"
+        icon="pi pi-times"
+        class="p-button-danger"
+        (click)="clearForm()"
+      ></button>
+    </div>
+  </div>
+</form>

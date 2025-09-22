@@ -1,0 +1,242 @@
+<div class="container mt-3">
+  <div class="flex">
+    <div class="mr-2 mb-4">
+      <button
+        pButton
+        class="p-button-info"
+        label="Nuevo"
+        icon="pi pi-plus"
+        (click)="createGroup()"
+      ></button>
+    </div>
+  </div>
+  <p-card>
+    <form autocomplete="off" [formGroup]="formGroup" (ngSubmit)="enviar()">
+      <div class="grid">
+        <!-- GRUPO -->
+        <div class="col-lg-7 p-ai-center justify-content-center">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="grupo">
+                <b>Grupo</b>
+              </label>
+              <p-dropdown
+                inputId="grupo"
+                filterBy="name"
+                placeholder="Seleccione un grupo"
+                formControlName="grupoId"
+                optionValue="value"
+                optionLabel="name"
+                [options]="groups"
+                [filter]="true"
+                [showClear]="true"
+                (onChange)="onChangeGrupo($event)"
+              ></p-dropdown>
+              <small class="p-error" *ngIf="validarCampos('grupoId')">
+                Debe seleccionar un grupo
+              </small>
+            </div>
+          </div>
+        </div>
+        <!-- Nombre -->
+        <div class="col-lg-5 p-ai-center justify-content-center">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="nombre">
+                <b>Nombre</b>
+              </label>
+              <input
+                pInputText
+                id="nombre"
+                type="text"
+                formControlName="nombre"
+                autofocus
+              />
+              <small class="p-error" *ngIf="validarCampos('nombre')">
+                Debe de ser de 3 letras mínimo y máximo 50
+              </small>
+            </div>
+          </div>
+        </div>
+        <!-- Nombre -->
+        <div class="col-lg-5 p-ai-center justify-content-center">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="nombreKey">
+                <b>Imagen</b>
+              </label>
+              <input
+                pInputText
+                id="nombreKey"
+                type="text"
+                formControlName="nombreKey"
+                autofocus
+                readonly="true"
+              />
+              <small class="p-error" *ngIf="validarCampos('nombreKey')">
+                Debe de ser de 3 letras mínimo y máximo 50
+              </small>
+            </div>
+          </div>
+        </div>
+        <!-- Descripcion -->
+        <div class="col-lg-5 p-ai-center justify-content-center">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="descripcion">
+                <b>Descripcion</b>
+              </label>
+              <input
+                pInputText
+                id="descripcion"
+                type="text"
+                formControlName="descripcion"
+                autofocus
+              />
+              <small class="p-error" *ngIf="validarCampos('descripcion')">
+                Debe de ser de 3 letras mínimo y máximo 50
+              </small>
+            </div>
+          </div>
+        </div>
+        <!-- Estado -->
+        <div class="col-lg-2 p-ai-center justify-content-center">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="estado">
+                <b>Estado</b>
+              </label>
+              <p-dropdown
+                inputId="estado"
+                placeholder="Seleccione un estado"
+                formControlName="estado"
+                optionValue="value"
+                optionLabel="name"
+                [options]="estados"
+              ></p-dropdown>
+              <small class="p-error" *ngIf="validarCampos('estado')">
+                Debe de ser de 3 letras mínimo y máximo 50
+              </small>
+            </div>
+          </div>
+        </div>
+        <!-- Lista de Elementos -->
+        <div class="col-lg-6 p-ai-center justify-content-center">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="element">
+                <b>Elementos</b>
+              </label>
+              <p-listbox
+                [options]="elements"
+                [filter]="true"
+                dataKey="nombre"
+                [listStyle]="{ 'max-height': '170px', width: '100%' }"
+              >
+                <ng-template let-element pTemplate="item">
+                  <div class="element-item w-100">
+                    <div class="flex justify-content-between">
+                      <h6>
+                        {{ element.nombre + " (" + element.tipoElemento + ")" }}
+                      </h6>
+                      <span (click)="removeElement(element)">
+                        <i class="pi pi-trash"></i>
+                      </span>
+                    </div>
+                  </div>
+                </ng-template>
+              </p-listbox>
+            </div>
+          </div>
+        </div>
+        <!-- Productos y Grupos -->
+        <div class="col-lg-6 p-ai-center justify-content-center">
+          <div class="p-fluid">
+            <div class="field">
+              <label for="descripcion">
+                <b>Productos</b>
+              </label>
+              <p-listbox
+                [metaKeySelection]="false"
+                [options]="products"
+                [checkbox]="true"
+                [filter]="true"
+                [multiple]="true"
+                [listStyle]="{ 'max-height': '150px', width: '100%' }"
+                formControlName="productos"
+                optionValue="value"
+                optionLabel="name"
+              >
+                <ng-template let-product pTemplate="item">
+                  <div class="product-item w-100">
+                    <div class="flex justify-content-between">
+                      <h6>
+                        {{ product.name }}
+                      </h6>
+                      <!-- <span>
+                      <i class="pi pi-check"></i>
+                    </span> -->
+                    </div>
+                  </div>
+                </ng-template>
+              </p-listbox>
+            </div>
+            <div class="field">
+              <label for="descripcion">
+                <b>Grupos</b>
+              </label>
+              <p-listbox
+                [metaKeySelection]="false"
+                [options]="groups"
+                [checkbox]="true"
+                [filter]="true"
+                [multiple]="true"
+                formControlName="grupos"
+                [listStyle]="{ 'max-height': '150px', width: '100%' }"
+                optionValue="value"
+                optionLabel="name"
+              >
+                <ng-template let-product pTemplate="item">
+                  <div class="product-item w-100">
+                    <div class="flex justify-content-between">
+                      <h6>
+                        {{ product.name }}
+                      </h6>
+                      <!-- <span>
+                      <i class="pi pi-check"></i>
+                    </span> -->
+                    </div>
+                  </div>
+                </ng-template>
+              </p-listbox>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 flex justify-content-center">
+        <div class="mr-2 p-mt-2">
+          <p-button
+            [disabled]="!formGroup.valid"
+            label="Guardar"
+            icon="pi pi-save"
+            type="submit"
+          ></p-button>
+        </div>
+        <div class="mr-2 p-mt-2">
+          <button
+            pButton
+            type="button"
+            label="Limpiar"
+            icon="pi pi-times"
+            class="p-button-danger"
+            (click)="clearForm()"
+          ></button>
+        </div>
+      </div>
+    </form>
+    <!-- <app-formulario
+      *ngIf="products.length > 0 && groups.length > 0"
+      [cols]="cols"
+    ></app-formulario> -->
+  </p-card>
+</div>

@@ -1,0 +1,40 @@
+// body {
+//   margin: 0;
+//   font-family: Arial, sans-serif;
+// }
+// .container {
+//   display: flex;
+//   justify-content: space-between;
+//   flex-wrap: wrap;
+//   padding: 20px;
+// }
+
+// .column {
+//   flex: 1;
+//   min-width: 300px;
+//   margin: 0 10px;
+// }
+
+// .row {
+//   display: flex;
+//   justify-content: space-between;
+//   margin-top: 20px;
+// }
+
+// .card {
+//   background-color: #0d3c61;
+//   color: black;
+//   padding: 20px;
+//   border-radius: 8px;
+//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+// }
+
+// @media (max-width: 768px) {
+//   .container {
+//     flex-direction: column;
+//   }
+
+//   .column {
+//     margin: 10px 0;
+//   }
+// }

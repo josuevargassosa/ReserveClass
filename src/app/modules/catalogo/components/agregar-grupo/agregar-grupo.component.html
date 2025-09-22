@@ -1,0 +1,72 @@
+<form autocomplete="off" [formGroup]="formGroup" (ngSubmit)="guardar()">
+  <div class="grid">
+    <div class="col-12 p-ai-center justify-content-center">
+      <div class="p-fluid">
+        <div class="field">
+          <label for="nombre">Nombre</label>
+          <input
+            pInputText
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            autofocus
+          />
+          <small class="p-error" *ngIf="validarCampos('nombre')">
+            Debe de ser de 3 letras mínimo y máximo 100
+          </small>
+        </div>
+      </div>
+      <div class="p-fluid">
+        <div class="field">
+          <label for="descripcion">Descripción</label>
+          <input
+            pInputText
+            id="descripcion"
+            type="text"
+            formControlName="descripcion"
+          />
+          <small class="p-error" *ngIf="validarCampos('descripcion')">
+            Debe de ser de 3 letras mínimo y máximo 50
+          </small>
+        </div>
+      </div>
+      <div class="p-fluid">
+        <div class="field">
+          <label for="valor">Estado</label>
+          <p-dropdown
+            inputId="estado"
+            placeholder="Seleccione un estado"
+            formControlName="estado"
+            optionValue="value"
+            optionLabel="name"
+            [options]="estados"
+            (onChange)="onChangeGrupo($event)"
+          ></p-dropdown>
+          <small class="p-error" *ngIf="validarCampos('estado')">
+            Debe de ser de 1 letra o número mínimo y máximo 30
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 flex justify-content-center">
+    <div class="mr-2 p-mt-2">
+      <p-button
+        [disabled]="!formGroup.valid"
+        label="Guardar"
+        icon="pi pi-save"
+        type="submit"
+      ></p-button>
+    </div>
+    <div class="mr-2 p-mt-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-danger"
+        (click)="cerrarDialog(false)"
+      ></button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,97 @@
+<p-blockUI [blocked]="globalService.bloquearPantalla">
+  <app-loading></app-loading>
+</p-blockUI>
+<div class="grid no-margin">
+  <div
+    [ngClass]="{
+      'col-2': globalService.mostrarMenu,
+      'col-0': !globalService.mostrarMenu
+    }"
+  >
+    <p-sidebar
+      *ngIf="globalService.mostrarMenu"
+      [visible]="true"
+      [modal]="false"
+      [style]="{ width: '16.5%' }"
+      styleClass="content-side"
+      [showCloseIcon]="false"
+    >
+      <div class="text-center mb-3" *ngIf="usuario as u; else anon">
+        <p-image
+          class="block"
+          src="assets/img/user-default.png"
+          [preview]="true"
+          alt="usuarioPerfil"
+          width="100"
+        ></p-image>
+        <label class="block font-bold text-lg">{{ u.rol }}</label>
+        <label class="block text-lg">{{ u.nombre }}</label>
+      </div>
+      <ng-template #anon>
+        <div class="text-center mb-3">
+          <p-image
+            class="block"
+            src="assets/img/user-default.png"
+            [preview]="true"
+            alt="usuarioPerfil"
+            width="100"
+          ></p-image>
+          <label class="block font-bold text-lg">—</label>
+          <label class="block text-lg">—</label>
+        </div>
+      </ng-template>
+
+      <app-menu></app-menu>
+      <app-loading *ngIf="!menuCargado" class="loading-menu"></app-loading>
+    </p-sidebar>
+  </div>
+
+  <div
+    [ngClass]="{
+      'col-10': globalService.mostrarMenu,
+      'col-12': !globalService.mostrarMenu
+    }"
+    class="text-layout"
+  >
+    <p-toast></p-toast>
+    <p-toast
+      position="center"
+      key="c"
+      (onClose)="onReject()"
+      [baseZIndex]="5000"
+    >
+      <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+          <div class="text-center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+            <h4>{{ message.summary }}</h4>
+            <p>{{ message.detail }}</p>
+          </div>
+          <div class="grid p-fluid">
+            <div class="col-6">
+              <button
+                type="button"
+                pButton
+                (click)="message.data.aceptar()"
+                label="Si"
+                class="p-button-success"
+              ></button>
+            </div>
+            <div class="col-6">
+              <button
+                type="button"
+                pButton
+                (click)="message.data.rechazar()"
+                label="No"
+                class="p-button-secondary"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-toast>
+    <app-menu-toolbar></app-menu-toolbar>
+    <app-breadcrumb></app-breadcrumb>
+    <router-outlet></router-outlet>
+  </div>
+</div>

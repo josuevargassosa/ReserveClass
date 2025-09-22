@@ -1,0 +1,32 @@
+.flex-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .padding {
+    padding: 5%;
+  }.main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espacio entre los elementos */
+  }
+  
+  .flex-container {
+    display: flex;
+    justify-content: space-between; /* Alinear elementos a los extremos */
+    padding: 0 10px; /* Añadir algo de espacio a los lados */
+    margin-bottom: 20px; /* Espacio entre los botones y la tabla */
+  }
+  
+  .left-button, .right-button {
+    display: flex;
+    align-items: center;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  

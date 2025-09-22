@@ -1,0 +1,38 @@
+td {
+    text-align: center !important;
+    white-space: break-spaces !important;
+}
+
+.customer-badge {
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.status-red {
+    background-color: #ffcdd2;
+    color: #c63737;
+}
+
+.status-green {
+    background-color: #c8e6c9;
+    color: #256029;
+}
+
+.status-brown {
+    background-color: #feedaf;
+    color: #8a5340;
+}
+
+.status-purple {
+    background-color: #eccfff;
+    color: #694382;
+}
+
+.status-blue {
+    background-color: #b3e5fc;
+    color: #23547b;
+}
