@@ -1,11 +1,26 @@
 <p-toolbar class="block mb-3">
-    <div class="p-toolbar-group-left">
-        <button pButton pRipple icon="pi pi-bars" class="p-button-rounded p-button-info p-button-outlined" pTooltip="Menú" (click)="globalService.mostrarOcultarMenu()"></button>
-    </div>
-    <div id="center-toolbar">
-        <label class="inline mr-3 text-4xl">Remesas</label>
-    </div>
-    <div class="p-toolbar-group-right">
-        <button pButton pRipple icon="pi pi-sign-out" class="p-button-rounded p-button-danger p-button-outlined" pTooltip="Salir" tooltipPosition="left" (click)="cerrarSesion()"></button>
-    </div>
+  <div class="p-toolbar-group-left">
+    <button
+      pButton
+      pRipple
+      icon="pi pi-bars"
+      class="p-button-rounded p-button-info p-button-outlined"
+      pTooltip="Menú"
+      (click)="globalService.mostrarOcultarMenu()"
+    ></button>
+  </div>
+  <div id="center-toolbar">
+    <label class="inline mr-3 text-4xl">Monitor</label>
+  </div>
+  <div class="p-toolbar-group-right">
+    <button
+      pButton
+      pRipple
+      icon="pi pi-sign-out"
+      class="p-button-rounded p-button-danger p-button-outlined"
+      pTooltip="Salir"
+      tooltipPosition="left"
+      (click)="cerrarSesion()"
+    ></button>
+  </div>
 </p-toolbar>

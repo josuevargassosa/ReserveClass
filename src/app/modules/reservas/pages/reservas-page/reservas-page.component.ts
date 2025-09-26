@@ -4,9 +4,12 @@ import { AutenticacionService } from "src/app/modules/auth/services/autenticacio
 import {
   ReservasService,
   CreateReservaDto,
+  CatalogoItem,
 } from "../../services/reservas.service";
 import { Reserva } from "../../interfaces/reserva.interface";
 import { ToastService } from "src/app/core/services/toast.service";
+
+import { forkJoin } from "rxjs";
 
 type Rol = "Administrador" | "Docente" | "Coordinador";
 
@@ -20,12 +23,19 @@ export class ReservasPageComponent implements OnInit {
   rows: Reserva[] = [];
   rol?: Rol;
 
+  labs: CatalogoItem[] = [];
+  asigs: CatalogoItem[] = [];
+  private labMap = new Map<number, string>();
+  private asigMap = new Map<number, string>();
+
+  dataUser: any | null = null; // 🟢 NUEVO: se asigna en ngOnInit
+
   // Dialog “Nueva”
   showNew = false;
   form = this.fb.group({
-    laboratorioId: [1, [Validators.required, Validators.min(1)]],
-    usuarioId: [0, [Validators.required, Validators.min(1)]],
-    asignaturaId: [1, [Validators.required, Validators.min(1)]],
+    laboratorioId: [null as number | null, [Validators.required]],
+    usuarioId: [0, [Validators.required]],
+    asignaturaId: [null as number | null, [Validators.required]],
     inicioISO: ["", Validators.required],
     finISO: ["", Validators.required],
   });
@@ -39,21 +49,36 @@ export class ReservasPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.rol = this.auth.usuario?.rol as Rol | undefined;
-    // si es Docente, autollenar su usuarioId
-    const uid = this.auth.usuario?.id ?? 0;
-    if (this.rol === "Docente" && uid) this.form.patchValue({ usuarioId: uid });
+
+    // 🟢 NUEVO: ahora sí, auth ya está inyectado => podemos leerlo
+    this.dataUser = this.auth.usuario;
+    const uid = this.dataUser?.id ?? 0;
+    this.form.patchValue({ usuarioId: uid });
+
+    this.loading = true;
+
+    this.srv.laboratorios().subscribe(async (res) => {
+      this.labs = res.result;
+      this.labMap = new Map(res.result.map((l: any) => [l.id, l.nombre]));
+    });
+
+    this.srv.asignaturas().subscribe(async (res) => {
+      this.asigs = res.result;
+      this.labMap = new Map(res.result.map((l: any) => [l.id, l.nombre]));
+    });
+
     this.load();
   }
 
   load(): void {
     this.loading = true;
-    const uid = this.auth.usuario?.id ?? 0;
+    //const uid = this.auth.usuario?.id ?? 0;
 
     this.srv.list().subscribe({
       next: (data) => {
         this.rows =
           this.rol === "Docente"
-            ? data.filter((r) => r.usuarioId === uid)
+            ? data.filter((r) => r.usuarioId === this.dataUser?.id)
             : data;
         this.loading = false;
       },
@@ -64,24 +89,42 @@ export class ReservasPageComponent implements OnInit {
     });
   }
 
+  labName(id: number) {
+    return this.labMap.get(id) ?? id;
+  }
+  asigName(id: number) {
+    return this.asigMap.get(id) ?? id;
+  }
+
   openNew(): void {
+    const firstLab = this.labs[0]?.id ?? null;
+    const firstAsig = this.asigs[0]?.id ?? null;
+    //const uid = this.rol === "Docente" ? this.auth.usuario?.id ?? 0 : 0;
+
     this.form.reset({
-      laboratorioId: 1,
-      usuarioId: this.rol === "Docente" ? this.auth.usuario?.id ?? 0 : 0,
-      asignaturaId: 1,
+      laboratorioId: firstLab,
+      usuarioId: this.dataUser?.id ?? null, // si es admin/coordinador, tú decides si permitir elegir usuario luego
+      asignaturaId: firstAsig,
       inicioISO: "",
       finISO: "",
     });
     this.showNew = true;
   }
 
+  isHorarioValido(): boolean {
+    const i = this.form.value.inicioISO;
+    const f = this.form.value.finISO;
+    if (!i || !f) return false;
+    return new Date(i) < new Date(f);
+  }
+
   saveNew(): void {
     this.form.markAllAsTouched();
-    if (this.form.invalid) return;
+    if (this.form.invalid || !this.isHorarioValido()) return;
 
     const dto: CreateReservaDto = this.form.getRawValue() as any;
     this.srv.create(dto).subscribe({
-      next: (r) => {
+      next: (_) => {
         this.toast.mostrarToastSuccess("Reserva creada");
         this.showNew = false;
         this.load();
@@ -91,6 +134,11 @@ export class ReservasPageComponent implements OnInit {
         this.toast.mostrarToastError(msg);
       },
     });
+  }
+
+  cancelar() {
+    this.showNew = false;
+    // this.form.reset();
   }
 
   approve(r: Reserva): void {

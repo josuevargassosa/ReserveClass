@@ -2,12 +2,24 @@
   <div class="flex justify-content-between align-items-center mb-3">
     <div class="text-500">Lista de reservas existentes</div>
 
-    <button pButton label="Nueva" icon="pi pi-plus" class="p-button-sm"
-            (click)="openNew()"></button>
+    <button
+      pButton
+      label="Nueva"
+      icon="pi pi-plus"
+      class="p-button-sm"
+      (click)="openNew()"
+    ></button>
   </div>
 
-  <p-table [value]="rows" [loading]="loading" responsiveLayout="scroll"
-           [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]" emptyMessage="Sin registros">
+  <p-table
+    [value]="rows"
+    [loading]="loading"
+    responsiveLayout="scroll"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    emptyMessage="Sin registros"
+  >
     <ng-template pTemplate="header">
       <tr>
         <th>Fecha</th>
@@ -16,7 +28,7 @@
         <th>Asignatura</th>
         <th>Horario</th>
         <th>Estado</th>
-        <th style="width: 140px; text-align:right">Acciones</th>
+        <th style="width: 140px; text-align: right">Acciones</th>
       </tr>
     </ng-template>
 
@@ -28,44 +40,80 @@
         <td>{{ r.asignaturaId }}</td>
         <td>{{ r.horaInicio }} - {{ r.horaFin }}</td>
         <td>
-          <span class="p-tag" [ngClass]="{
-            'p-tag-warning': r.estado === 'Pendiente',
-            'p-tag-success': r.estado === 'Aprobada',
-            'p-tag-danger':  r.estado === 'Rechazada'
-          }">{{ r.estado }}</span>
+          <span
+            class="p-tag"
+            [ngClass]="{
+              'p-tag-warning': r.estado === 'Pendiente',
+              'p-tag-success': r.estado === 'Aprobada',
+              'p-tag-danger': r.estado === 'Rechazada'
+            }"
+            >{{ r.estado }}</span
+          >
         </td>
         <td class="text-right">
-          <button pButton icon="pi pi-check"
-                  class="p-button-rounded p-button-text p-button-success mr-1"
-                  [disabled]="r.estado !== 'Pendiente' || !(rol==='Administrador'||rol==='Coordinador')"
-                  (click)="approve(r)" pTooltip="Aprobar"></button>
+          <button
+            pButton
+            icon="pi pi-check"
+            class="p-button-rounded p-button-text p-button-success mr-1"
+            [disabled]="
+              r.estado !== 'Pendiente' ||
+              !(rol === 'Administrador' || rol === 'Coordinador')
+            "
+            (click)="approve(r)"
+            pTooltip="Aprobar"
+          ></button>
 
-          <button pButton icon="pi pi-times"
-                  class="p-button-rounded p-button-text p-button-danger"
-                  [disabled]="r.estado !== 'Pendiente' || !(rol==='Administrador'||rol==='Coordinador')"
-                  (click)="reject(r)" pTooltip="Rechazar"></button>
+          <button
+            pButton
+            icon="pi pi-times"
+            class="p-button-rounded p-button-text p-button-danger"
+            [disabled]="
+              r.estado !== 'Pendiente' ||
+              !(rol === 'Administrador' || rol === 'Coordinador')
+            "
+            (click)="reject(r)"
+            pTooltip="Rechazar"
+          ></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </p-card>
 
-<!-- Dialog Nueva -->
-<p-dialog header="Nueva reserva" [(visible)]="showNew" [modal]="true" [style]="{width:'32rem'}">
+<p-dialog
+  header="Nueva reserva"
+  [(visible)]="showNew"
+  [modal]="true"
+  [style]="{ width: '32rem' }"
+>
   <form [formGroup]="form" class="p-fluid">
     <div class="field">
-      <label>Laboratorio ID</label>
-      <input pInputText type="number" formControlName="laboratorioId" />
+      <label>Laboratorio</label>
+      <p-dropdown
+        formControlName="laboratorioId"
+        [options]="labs"
+        optionLabel="nombre"
+        optionValue="id"
+        placeholder="Seleccione..."
+      ></p-dropdown>
     </div>
 
     <div class="field">
-      <label>Usuario ID</label>
-      <input pInputText type="number" formControlName="usuarioId" [readonly]="rol==='Docente'"/>
+      <label>Usuario</label>
+      <!-- mostramos el nombre, guardamos el id oculto -->
+      <input pInputText [value]="dataUser?.nombre" readonly />
+      <input type="hidden" formControlName="usuarioId" />
     </div>
 
     <div class="field">
-      <label>Asignatura ID</label>
-      <input pInputText type="number" formControlName="asignaturaId" />
+      <label>Asignatura</label>
+      <p-dropdown
+        formControlName="asignaturaId"
+        [options]="asigs"
+        optionLabel="nombre"
+        optionValue="id"
+        placeholder="Seleccione..."
+      ></p-dropdown>
     </div>
 
     <div class="field">
@@ -77,10 +125,26 @@
       <label>Fin</label>
       <input pInputText type="datetime-local" formControlName="finISO" />
     </div>
+
+    <p-message
+      *ngIf="form.touched && !isHorarioValido()"
+      severity="warn"
+      text="La hora fin debe ser mayor a la hora inicio"
+    ></p-message>
   </form>
 
   <ng-template pTemplate="footer">
-    <button pButton label="Cancelar" class="p-button-text" (click)="showNew=false"></button>
-    <button pButton label="Guardar" (click)="saveNew()" [disabled]="form.invalid"></button>
+    <button
+      pButton
+      label="Cancelar"
+      class="p-button-text"
+      (click)="cancelar()"
+    ></button>
+    <button
+      pButton
+      label="Guardar"
+      (click)="saveNew()"
+      [disabled]="form.invalid || !isHorarioValido()"
+    ></button>
   </ng-template>
 </p-dialog>
