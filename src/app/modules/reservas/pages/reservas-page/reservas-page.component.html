@@ -34,10 +34,12 @@
 
     <ng-template pTemplate="body" let-r>
       <tr>
-        <td>{{ r.fecha }}</td>
-        <td>{{ r.laboratorioId }}</td>
-        <td>{{ r.usuarioId }}</td>
-        <td>{{ r.asignaturaId }}</td>
+        <td>{{ r.fechaDisplay || (r.fecha | date : "yyyy/MM/dd") }}</td>
+
+        <td>{{ r.laboratorioNombre || r.laboratorioId }}</td>
+        <td>{{ r.usuarioNombre || r.usuarioId }}</td>
+        <td>{{ r.asignaturaNombre || r.asignaturaId }}</td>
+
         <td>{{ r.horaInicio }} - {{ r.horaFin }}</td>
         <td>
           <span
@@ -51,26 +53,32 @@
           >
         </td>
         <td class="text-right">
+          <!-- Botón aprobar -->
           <button
             pButton
             icon="pi pi-check"
             class="p-button-rounded p-button-text p-button-success mr-1"
             [disabled]="
               r.estado !== 'Pendiente' ||
-              !(rol === 'Administrador' || rol === 'Coordinador')
+              !(rol === 'Administrador' || rol === 'Coordinador') ||
+              approvingId === r.id
             "
+            [loading]="approvingId === r.id"
             (click)="approve(r)"
             pTooltip="Aprobar"
           ></button>
 
+          <!-- Botón rechazar -->
           <button
             pButton
             icon="pi pi-times"
             class="p-button-rounded p-button-text p-button-danger"
             [disabled]="
               r.estado !== 'Pendiente' ||
-              !(rol === 'Administrador' || rol === 'Coordinador')
+              !(rol === 'Administrador' || rol === 'Coordinador') ||
+              rejectingId === r.id
             "
+            [loading]="rejectingId === r.id"
             (click)="reject(r)"
             pTooltip="Rechazar"
           ></button>

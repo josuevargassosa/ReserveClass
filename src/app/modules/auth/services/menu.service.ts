@@ -39,7 +39,7 @@ export class MenuService {
     {
       label: "Catálogos",
       icon: "pi pi-database",
-      routerLink: "/admin",
+      routerLink: "/catalogos",
       roles: ["Administrador"],
     },
     // agrega lo que necesites…

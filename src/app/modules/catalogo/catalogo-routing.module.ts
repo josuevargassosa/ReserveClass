@@ -5,6 +5,8 @@ import { ProductoPageComponent } from "./pages/producto-page/producto-page.compo
 // import { NotificationsComponent } from 'src/app/principal/notifications/notifications.component';
 import { AprobarComprobantesComponent } from "../cislatam/pages/aprobar-comprobantes/aprobar-comprobantes.component";
 import { CislatamModule } from "../cislatam/cislatam.module";
+import { LaboratoriosPageComponent } from "./pages/laboratorios-page/laboratorios-page.component";
+import { AsignaturasPageComponent } from "./pages/asignaturas-page/asignaturas-page.component";
 
 const routes: Routes = [
   {
@@ -20,11 +22,16 @@ const routes: Routes = [
         component: ProductoPageComponent,
         data: { breadcrumb: "Producto" },
       },
-      // {
-      //   path: 'notification',
-      //   component: NotificationsComponent,
-      //   data: { breadcrumb: 'Notificación' },
-      // },
+      {
+        path: "laboratorios",
+        component: LaboratoriosPageComponent,
+        data: { breadcrumb: "Laboratorios" },
+      },
+      {
+        path: "asignaturas",
+        component: AsignaturasPageComponent,
+        data: { breadcrumb: "Asignaturas" },
+      },
       {
         path: "cislatam",
         loadChildren: () => CislatamModule,

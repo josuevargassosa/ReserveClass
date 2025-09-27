@@ -25,7 +25,6 @@ export class MenuComponent implements OnInit {
   private cargarMenu(): void {
     const rol = this.authService.usuario?.rol as Rol | undefined;
 
-    // Ítems mínimos por MVP
     const menu: MenuItem[] = [
       {
         label: "Reservas",
@@ -39,7 +38,19 @@ export class MenuComponent implements OnInit {
       menu.push({
         label: "Catálogos",
         icon: "pi pi-database",
-        routerLink: ["/principal", "catalogo"],
+        //routerLink: ["/principal", "catalogo"],
+        items: [
+          {
+            label: "Laboratorios",
+            icon: "pi pi-building",
+            routerLink: ["/principal/catalogo/laboratorios"],
+          },
+          {
+            label: "Asignaturas",
+            icon: "pi pi-book",
+            routerLink: ["/principal/catalogo/asignaturas"],
+          },
+        ],
       });
       // Ejemplo para el futuro:
       // menu.push({ label: 'Auditoría', icon: 'pi pi-clock', routerLink: ['/principal','auditoria'] });

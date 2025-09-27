@@ -40,11 +40,20 @@ export class ReservasService {
     return this.http.post<any>(this.base, dto);
   }
 
-  approve(id: number): Observable<any> {
-    return this.http.post<any>(`${this.base}/${id}/aprobar`, {});
+  // ✅ aprobar
+  approve(id: number) {
+    const url = `${
+      environment.apiBaseUrl
+    }/monitor/reservas/${encodeURIComponent(id)}/aprobar`;
+    console.log("PATCH ->", url); // Debe terminar en .../reservas/1/aprobar
+    return this.http.patch<any>(url, {});
   }
 
-  reject(id: number): Observable<any> {
-    return this.http.post<any>(`${this.base}/${id}/rechazar`, {});
+  // ✅ rechazar (por si acaso)
+  reject(id: number) {
+    const url = `${
+      environment.apiBaseUrl
+    }/monitor/reservas/${encodeURIComponent(id)}/rechazar`;
+    return this.http.patch<any>(url, {});
   }
 }

@@ -9,9 +9,11 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { GrupoPageComponent } from './pages/grupo-page/grupo-page.component';
 import { AgregarGrupoComponent } from './components/agregar-grupo/agregar-grupo.component';
 import { ProductoPageComponent } from './pages/producto-page/producto-page.component';
+import { LaboratoriosPageComponent } from './pages/laboratorios-page/laboratorios-page.component';
+import { AsignaturasPageComponent } from './pages/asignaturas-page/asignaturas-page.component';
 
 @NgModule({
-  declarations: [GrupoPageComponent, AgregarGrupoComponent, ProductoPageComponent],
+  declarations: [GrupoPageComponent, AgregarGrupoComponent, ProductoPageComponent, LaboratoriosPageComponent, AsignaturasPageComponent],
   imports: [
     CommonModule,
     FormsModule,

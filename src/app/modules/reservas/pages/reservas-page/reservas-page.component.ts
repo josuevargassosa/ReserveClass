@@ -28,7 +28,10 @@ export class ReservasPageComponent implements OnInit {
   private labMap = new Map<number, string>();
   private asigMap = new Map<number, string>();
 
-  dataUser: any | null = null; // 🟢 NUEVO: se asigna en ngOnInit
+  dataUser: any | null = null;
+
+  approvingId: number | null = null;
+  rejectingId: number | null = null;
 
   // Dialog “Nueva”
   showNew = false;
@@ -50,7 +53,6 @@ export class ReservasPageComponent implements OnInit {
   ngOnInit(): void {
     this.rol = this.auth.usuario?.rol as Rol | undefined;
 
-    // 🟢 NUEVO: ahora sí, auth ya está inyectado => podemos leerlo
     this.dataUser = this.auth.usuario;
     const uid = this.dataUser?.id ?? 0;
     this.form.patchValue({ usuarioId: uid });
@@ -81,6 +83,7 @@ export class ReservasPageComponent implements OnInit {
             ? data.filter((r) => r.usuarioId === this.dataUser?.id)
             : data;
         this.loading = false;
+        console.log(this.rows);
       },
       error: (_) => {
         this.rows = [];
@@ -142,22 +145,43 @@ export class ReservasPageComponent implements OnInit {
   }
 
   approve(r: Reserva): void {
+    if (this.approvingId) return;
+    this.approvingId = r.id;
+
     this.srv.approve(r.id).subscribe({
       next: (_) => {
         this.toast.mostrarToastSuccess("Reserva aprobada");
+
         this.load();
+
+        this.approvingId = null;
       },
-      error: (_) => this.toast.mostrarToastError("No se pudo aprobar"),
+      error: (e) => {
+        console.log(e);
+        this.toast.mostrarToastError(e?.error?.message || "No se pudo aprobar");
+        this.approvingId = null;
+      },
     });
   }
 
   reject(r: Reserva): void {
+    if (this.rejectingId) return;
+    this.rejectingId = r.id;
+
     this.srv.reject(r.id).subscribe({
       next: (_) => {
         this.toast.mostrarToastSuccess("Reserva rechazada");
+
         this.load();
+        this.rejectingId = null;
       },
-      error: (_) => this.toast.mostrarToastError("No se pudo rechazar"),
+      error: (e) => {
+        console.log(e);
+        this.toast.mostrarToastError(
+          e?.error?.message || "No se pudo rechazar"
+        );
+        this.rejectingId = null;
+      },
     });
   }
 }
